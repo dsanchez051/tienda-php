@@ -9,7 +9,7 @@ CREATE TABLE customers (
     dni VARCHAR(9) UNIQUE NOT NULL,
     name VARCHAR(45) NOT NULL,
     address VARCHAR(255) NOT NULL,
-    password VARCHAR(255)
+    password VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE categories (
@@ -29,7 +29,7 @@ CREATE TABLE products (
 CREATE TABLE requests  (
     id INT AUTO_INCREMENT PRIMARY KEY,
     date_time DATETIME NOT NULL,
-    shipped BOOLEAN,
+    shipped BOOLEAN DEFAULT FALSE,
     customer_id INT NOT NULL,
     product_id INT NOT NULL,
 
