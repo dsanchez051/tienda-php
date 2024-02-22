@@ -3,7 +3,7 @@
 }
 
 .welcome {
-    background: url('/tienda-php/static/img/background.jpg');
+    background: url('/tienda/static/img/background.jpg');
     background-position: center center;
     background-size: cover;
 }
