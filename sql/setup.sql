@@ -1,14 +1,15 @@
-DROP DATABASE IF EXISTS shop_app;
+DROP DATABASE IF EXISTS tienda;
 
-CREATE DATABASE shop_app;
+CREATE DATABASE tienda;
 
-USE shop_app;
+USE tienda;
 
 CREATE TABLE customers (
     id INT AUTO_INCREMENT PRIMARY KEY,
     dni VARCHAR(9) UNIQUE NOT NULL,
     name VARCHAR(45) NOT NULL,
     address VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL
 );
 
