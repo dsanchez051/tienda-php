@@ -139,7 +139,4 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 </div>
 
 
-<?php require "partials/footer.php"
-
-
-?>
+<?php require "partials/footer.php" ?>
