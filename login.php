@@ -22,17 +22,19 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         if ($statement->rowCount() === 0) {
             $error = "Invalid credentials.";
         } else {
-            $customer = $statement->fetch();
+            $customer = $statement->fetch(PDO::FETCH_ASSOC);
 
             if (!password_verify($password, $customer["password"])) {
                 $error = "Invalid credentials.";
             } else {
+                // Iniciar sesión y guardar el cliente (excepto su contraseña) en la sesión	
                 session_start();
 
-                unset($user["password"]);
+                unset($customer["password"]);
 
                 $_SESSION["customer"] = $customer;
 
+                // Redirigir a la página de home
                 header("Location: home.php");
             }
         }
@@ -56,7 +58,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         </p>
                     <?php endif ?>
 
-                    <form method="POST" action="register.php">
+                    <form method="POST" action="login.php">
 
                         <div class="mb-3 row">
                             <label for="email" class="col-md-4 col-form-label text-md-end">Email</label>

@@ -58,9 +58,26 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             ":password" => password_hash($password, PASSWORD_DEFAULT)
           ]);
 
+        // Obtener el cliente recién insertado
+        $statement = $conn->prepare("SELECT * FROM customers WHERE email = :email LIMIT 1");
+        $statement->bindValue(":email", $email);
+        $statement->execute();
+        $customers = $statement->fetch(PDO::FETCH_ASSOC);
+
+        // Iniciar sesión y guardar el cliente (excepto su contraseña) en la sesión	
+        session_start();
+
+        $_SESSION["customer"] = $customer;
+
+        // $_SESSION["customer"] = [
+        //   "dni" => $dni,
+        //   "name" => $name,
+        //   "address" => $address,
+        //   "email" => $email
+        // ];
+
         // Redirigir a la página de home después de la inserción
-        // header("Location: home.php");
-        header("Location: register.php");
+        header("Location: home.php");
       }
     }
   }
