@@ -1,7 +1,7 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container-fluid">
 
-    <a class="navbar-brand font-weight-bold" href="index.php">
+    <a class="navbar-brand font-weight-bold" href="home.php">
       <img class="mr-2" src="./static/img/logo.png" />
       Tienda
     </a>
@@ -19,7 +19,7 @@
               <a class="nav-link" href="home.php">Home</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="add.php">Add Contact</a>
+              <a class="nav-link" href="add_product.php">Add Product</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="logout.php">Logout</a>
