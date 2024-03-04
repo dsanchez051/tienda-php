@@ -4,12 +4,14 @@ require "database.php";
 
 session_start();
 
+// Se redirige al usuario a la página de inicio si no ha iniciado sesión como cliente
 if (!isset($_SESSION["customer"])) {
   header("Location: index.php");
 }
 
 $error = null;
 
+// Procesamiento del formulario
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
   $name = $_POST["name"];
   $price = $_POST["price"];
@@ -33,7 +35,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 $products = $conn->query("SELECT * FROM products")->fetchAll(PDO::FETCH_ASSOC);
 
 $categories = ["Electronics", "Clothes", "Books", "Home"];
-
 
 ?>
 

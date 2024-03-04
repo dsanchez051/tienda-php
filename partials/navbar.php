@@ -22,6 +22,9 @@
               <a class="nav-link" href="add_product.php">Add Product</a>
             </li>
             <li class="nav-item">
+              <a class="nav-link" href="add_category.php">Add Categoy</a>
+            </li>
+            <li class="nav-item">
               <a class="nav-link" href="logout.php">Logout</a>
             </li>
           <?php else : ?>

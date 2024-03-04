@@ -4,6 +4,7 @@ require "database.php";
 
 $error = null;
 
+// Procesamiento del formulario
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
   $dni = $_POST["dni"];
   $name = $_POST["name"];
@@ -68,13 +69,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         session_start();
 
         $_SESSION["customer"] = $customer;
-
-        // $_SESSION["customer"] = [
-        //   "dni" => $dni,
-        //   "name" => $name,
-        //   "address" => $address,
-        //   "email" => $email
-        // ];
 
         // Redirigir a la página de home después de la inserción
         header("Location: home.php");
