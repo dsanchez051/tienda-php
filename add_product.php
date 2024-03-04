@@ -7,6 +7,7 @@ session_start();
 // Se redirige al usuario a la página de inicio si no ha iniciado sesión como cliente
 if (!isset($_SESSION["customer"])) {
   header("Location: index.php");
+  return;
 }
 
 $error = null;
@@ -33,20 +34,21 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 }
 
 $products = $conn->query("SELECT * FROM products")->fetchAll(PDO::FETCH_ASSOC);
-
-$categories = ["Electronics", "Clothes", "Books", "Home"];
+$categories = $conn->query("SELECT * FROM categories")->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
 
 <?php require "partials/header.php" ?>
 
 <div class="container pt-4">
-  <div class="row">
+  <div class="row justify-content-center">
     <div class="col-md-6">
       <h2>Add Product</h2>
 
       <?php if ($error) : ?>
-        <p class="text-danger"><?= $error ?></p>
+        <p class="text-danger">
+          <?= $error ?>
+        </p>
       <?php endif ?>
 
       <form method="POST">

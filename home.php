@@ -7,6 +7,7 @@ session_start();
 // Se redirige al usuario a la página de inicio si no ha iniciado sesión como cliente
 if (!isset($_SESSION["customer"])) {
   header("Location: index.php");
+  return;
 }
 
 $customers = $conn->query("SELECT * FROM customers")->fetchAll(PDO::FETCH_ASSOC);
