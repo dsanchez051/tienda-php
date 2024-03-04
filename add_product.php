@@ -30,9 +30,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         ":price" => $price,
         ":category_id" => $category_id
       ]);
+
+    $_SESSION["flash"] = ["message" => "Product {$name} added."];
   }
+
+  header("Location: add_product.php");
+  return;
 }
 
+// Obtener todas las categorías y productos actualizados
 $products = $conn->query("SELECT * FROM products")->fetchAll(PDO::FETCH_ASSOC);
 $categories = $conn->query("SELECT * FROM categories")->fetchAll(PDO::FETCH_ASSOC);
 
@@ -40,81 +46,84 @@ $categories = $conn->query("SELECT * FROM categories")->fetchAll(PDO::FETCH_ASSO
 
 <?php require "partials/header.php" ?>
 
-<div class="container pt-4">
+<!-- Formulario para añadir una nuevo producto -->
+<div class="container pt-5">
   <div class="row justify-content-center">
+
     <div class="col-md-6">
-      <h2>Add Product</h2>
+      <div class="card">
+        <div class="card-header">Add New Product</div>
+        <div class="card-body">
 
-      <?php if ($error) : ?>
-        <p class="text-danger">
-          <?= $error ?>
-        </p>
-      <?php endif ?>
+          <?php if ($error) : ?>
+            <p class="text-danger">
+              <?= $error ?>
+            </p>
+          <?php endif ?>
 
-      <form method="POST">
+          <form method="POST" action="add_product.php">
 
-        <div class="mb-3">
-          <label for="name" class="form-label">Name</label>
-          <input type="text" class="form-control" id="name" name="name">
+            <div class="mb-3">
+              <label for="name" class="form-label">Name</label>
+              <input type="text" class="form-control" id="name" name="name">
+            </div>
+
+            <div class="mb-3">
+              <label for="price" class="form-label">Price</label>
+              <input type="number" step="0.01" class="form-control" id="price" name="price">
+            </div>
+
+            <div class="mb-3">
+              <label for="category_id" class="form-label">Category</label>
+              <select class="form-select" id="category_id" name="category_id">
+                <?php foreach ($categories as $category) : ?>
+                  <option value="<?= $category["id"] ?>">
+                    <?= $category["type"] ?>
+                  </option>
+                <?php endforeach ?>
+              </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Add Product</button>
+
+          </form>
         </div>
-
-        <div class="mb-3">
-          <label for="description" class="form-label">Description</label>
-          <textarea class="form-control" id="description" name="description"></textarea>
-        </div>
-
-        <div class="mb-3">
-          <label for="price" class="form-label">Price</label>
-          <input type="number" class="form-control" id="price" name="price">
-        </div>
-
-
-        <div class="mb-3">
-          <label for="category" class="form-label">Category</label>
-          <select class="form-select" id="category" name="category_id">
-            <?php foreach ($categories as $category) : ?>
-              <option value="<?= $category ?>"><?= $category ?></option>
-            <?php endforeach; ?>
-          </select>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Add Product</button>
-
-      </form>
+      </div>
     </div>
-  </div>
 
-  <div class="row mt-4">
-    <div class="col-md-12">
-      <h2>Products</h2>
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Price</th>
-            <th>Stock</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <?php foreach ($products as $product) : ?>
-            <tr>
-              <td><?= $product["name"] ?></td>
-              <td><?= $product["description"] ?></td>
-              <td><?= $product["price"] ?></td>
-              <td><?= $product["stock"] ?></td>
-              <td>
-                <form method="POST" action="delete_product.php">
-                  <input type="hidden" name="id" value="<?= $product["id"] ?>">
-                  <button type="submit" class="btn btn-danger">Delete</button>
-                </form>
-              </td>
-            </tr>
-          <?php endforeach ?>
-        </tbody>
-      </table>
+    <div class="col-md-6 text-center">
+      <div class="card">
+        <div class="card-header display-6">Products</div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+              <thead class="table-dark">
+                <tr>
+                  <th>Name</th>
+                  <th>Price</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <?php foreach ($products as $product) : ?>
+                  <tr>
+                    <td><?= $product["name"] ?></td>
+                    <td><?= $product["price"] ?></td>
+                    <td>
+                      <form method="POST" action="delete_product.php">
+                        <input type="hidden" name="id" value="<?= $product["id"] ?>">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                      </form>
+                    </td>
+                  </tr>
+                <?php endforeach ?>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
+
   </div>
 </div>
 

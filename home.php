@@ -16,48 +16,46 @@ $customers = $conn->query("SELECT * FROM customers")->fetchAll(PDO::FETCH_ASSOC)
 
 <?php require "partials/header.php" ?>
 
+<!-- Listado de los clientes -->
 <div class="container pt-4 p-3">
-  <div class="row">
-
-    <div class="col-md-12">
-      <h1>Customers</h1>
-      <table class="table">
-        <thead>
-          <tr>
-            <th>DNI</th>
-            <th>Name</th>
-            <th>Address</th>
-            <th>Email</th>
-          </tr>
-        </thead>
-        <tbody>
-          <?php foreach ($customers as $customer) : ?>
-            <tr>
-              <td><?= $customer["dni"] ?></td>
-              <td><?= $customer["name"] ?></td>
-              <td><?= $customer["address"] ?></td>
-              <td><?= $customer["email"] ?></td>
-            </tr>
-          <?php endforeach ?>
-        </tbody>
-      </table>
-    </div>
-
-    <?php foreach ($customers as $customer) : ?>
-      <div class="col-md-4 mb-3">
-        <div class="card text-center">
-          <div class="card-body">
-            <h3 class="card-title text-capitalize"><?= $customer["name"] ?></h3>
-            <p class="m-2">DNI: <?= $customer["dni"] ?></p>
-            <p class="m-2">Address: <?= $customer["address"] ?></p>
-            <p class="m-2">Email: <?= $customer["email"] ?></p>
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header display-6">Customers</div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+              <thead class="table-dark">
+                <tr>
+                  <th>DNI</th>
+                  <th>Name</th>
+                  <th>Address</th>
+                  <th>Email</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <?php foreach ($customers as $customer) : ?>
+                  <tr>
+                    <td><?= $customer["dni"] ?></td>
+                    <td><?= $customer["name"] ?></td>
+                    <td><?= $customer["address"] ?></td>
+                    <td><?= $customer["email"] ?></td>
+                    <td>
+                      <?php if ($customer["id"] === $_SESSION["customer"]["id"]) : ?>
+                        <a href="edit_customer.php?id=<?= $customer["id"] ?>" class="btn btn-primary">Edit</a>
+                        <a href="delete.php?id=<?= $customer["id"] ?>&type=customer" class="btn btn-danger">Delete</a>
+                      <?php endif; ?>
+                    </td>
+                  </tr>
+                <?php endforeach ?>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
-    <?php endforeach ?>
-
+    </div>
   </div>
 </div>
-
 
 <?php require "partials/footer.php" ?>

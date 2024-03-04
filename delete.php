@@ -53,7 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
 
       header("Location: add_order.php");
       return;
-      
+
     } else if ($type == "customer") {
 
       if ($id != $_SESSION["customer"]["id"]){
@@ -64,11 +64,13 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
 
       $conn->prepare("DELETE FROM customers WHERE id = :id")->execute([":id" => $id]);
 
-      header("Location: home.php");
+      header("Location: logout.php");
       return;
 
-    } else {
-      $error = "You can't delete yourself";
+    } else{
+      http_response_code(404);
+      echo("HTTP 404 NOT FOUND");
+      return;
     }
   }
 

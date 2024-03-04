@@ -7,6 +7,7 @@ session_start();
 // Se redirige al usuario a la página de inicio si no ha iniciado sesión como cliente
 if (!isset($_SESSION["customer"])) {
   header("Location: index.php");
+  return;
 }
 
 $error = null;
@@ -41,6 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
   }
 }
 
+// Obtener todas las categorías actualizadas
 $categories = $conn->query("SELECT * FROM categories")->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
@@ -77,9 +79,9 @@ $categories = $conn->query("SELECT * FROM categories")->fetchAll(PDO::FETCH_ASSO
   </div>
 </div>
 
+<!-- Listado de las categorías -->
 <div class="container pt-4 p-3">
   <div class="row">
-
     <?php foreach ($categories as $category) : ?>
       <div class="col-md-4 mb-3">
         <div class="card text-center">
@@ -90,7 +92,6 @@ $categories = $conn->query("SELECT * FROM categories")->fetchAll(PDO::FETCH_ASSO
         </div>
       </div>
     <?php endforeach ?>
-
   </div>
 </div>
 
