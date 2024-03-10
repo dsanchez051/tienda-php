@@ -34,7 +34,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
           ":type" => $type
         ]);
 
-        $_SESSION["flash"] = ["message" => "Category {$type} added."];
+        $_SESSION["flash"] = ["message" => "Category '{$type}' added."];
     }
 
     header("Location: add_category.php");

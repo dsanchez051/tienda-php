@@ -31,16 +31,22 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         ":category_id" => $category_id
       ]);
 
-    $_SESSION["flash"] = ["message" => "Product {$name} added."];
+    $_SESSION["flash"] = ["message" => "Product '{$name}' added."];
   }
 
   header("Location: add_product.php");
   return;
 }
 
-// Obtener todas las categorías y productos actualizados
-$products = $conn->query("SELECT * FROM products")->fetchAll(PDO::FETCH_ASSOC);
+// Obtener todas las categorías
 $categories = $conn->query("SELECT * FROM categories")->fetchAll(PDO::FETCH_ASSOC);
+
+// Obtener todos productos actualizados con el nombre de su respectiva categoría
+$products = $conn
+  ->query("SELECT products.id, products.name, products.price, categories.type as category
+            FROM products 
+            JOIN categories ON products.category_id = categories.id")
+  ->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
 
@@ -101,6 +107,7 @@ $categories = $conn->query("SELECT * FROM categories")->fetchAll(PDO::FETCH_ASSO
                 <tr>
                   <th>Name</th>
                   <th>Price</th>
+                  <th>Category</th>
                   <th>Action</th>
                 </tr>
               </thead>
@@ -109,11 +116,9 @@ $categories = $conn->query("SELECT * FROM categories")->fetchAll(PDO::FETCH_ASSO
                   <tr>
                     <td><?= $product["name"] ?></td>
                     <td><?= $product["price"] ?></td>
+                    <td><?= $product["category"] ?></td>
                     <td>
-                      <form method="POST" action="delete_product.php">
-                        <input type="hidden" name="id" value="<?= $product["id"] ?>">
-                        <button type="submit" class="btn btn-danger">Delete</button>
-                      </form>
+                      <a href="delete.php?id=<?= $product["id"] ?>&type=product" class="btn btn-danger">Delete</a>
                     </td>
                   </tr>
                 <?php endforeach ?>

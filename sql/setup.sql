@@ -27,7 +27,7 @@ CREATE TABLE products (
     FOREIGN KEY (category_id) REFERENCES categories(id)
 );
 
-CREATE TABLE requests  (
+CREATE TABLE orders  (
     id INT AUTO_INCREMENT PRIMARY KEY,
     date_time DATETIME NOT NULL,
     shipped BOOLEAN DEFAULT FALSE,
