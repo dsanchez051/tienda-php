@@ -42,7 +42,7 @@ $customers = $conn->query("SELECT * FROM customers")->fetchAll(PDO::FETCH_ASSOC)
                     <td><?= $customer["address"] ?></td>
                     <td><?= $customer["email"] ?></td>
                     <td>
-                      <?php if ($customer["id"] === $_SESSION["customer"]["id"]) : ?>
+                      <?php if ($_SESSION["customer"]["name"] === "admin" || $customer["id"] === $_SESSION["customer"]["id"]) : ?>
                         <a href="edit_customer.php?id=<?= $customer["id"] ?>" class="btn btn-primary">Edit</a>
                         <a href="delete.php?id=<?= $customer["id"] ?>&type=customer" class="btn btn-danger">Delete</a>
                       <?php endif; ?>
