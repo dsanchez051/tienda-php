@@ -7,6 +7,7 @@ $error = null;
 // Procesamiento del formulario
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
   $dni = $_POST["dni"];
+  $dni = strtoupper($dni); // Convertir la letra a mayúscula
   $name = $_POST["name"];
   $address = $_POST["address"];
   $email = $_POST["email"];
