@@ -3,8 +3,8 @@ const welcome = document.querySelector(".welcome");
 const navbarToggle = document.querySelector("#navbarNav");
 
 const resizeBakgroundImg = () => {
-  const height = window.innerHeight - navbar.clientHeight;
-  welcome.style.height = `${height}px`;
+    const height = window.innerHeight - navbar.clientHeight;
+    welcome.style.height = `${height}px`;
 };
 
 
