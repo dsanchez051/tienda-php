@@ -15,36 +15,36 @@
                 <ul class="navbar-nav">
 
                     <?php if (isset($_SESSION["customer"]) && $_SESSION["customer"]["email"] != "admin@admin.com") : ?>
-                        <li class="nav-item">
+                        <li class="nav-item card border-secondary">
                             <a class="nav-link" href="home.php">Home</a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item card border-secondary">
                             <a class="nav-link" href="customers.php">My Profile</a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item card border-secondary">
                             <a class="nav-link" href="logout.php">Logout</a>
                         </li>
                     <?php elseif (isset($_SESSION["customer"]) && $_SESSION["customer"]["email"] == "admin@admin.com") : ?>
-                        <li class="nav-item">
+                        <li class="nav-item card border-secondary">
                             <a class="nav-link" href="home.php">Home</a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item card border-secondary">
                             <a class="nav-link" href="customers.php">Customers</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="add_product.php">Add Product</a>
+                        <li class="nav-item card border-secondary">
+                            <a class="nav-link" href="products.php">Manage Products</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="add_category.php">Add Categoy</a>
+                        <li class="nav-item card border-secondary">
+                            <a class="nav-link" href="categories.php">Manage Categories</a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item card border-secondary">
                             <a class="nav-link" href="logout.php">Logout</a>
                         </li>
                     <?php else : ?>
-                        <li class="nav-item">
+                        <li class="nav-item card border-secondary">
                             <a class="nav-link" href="register.php">Register</a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item card border-secondary">
                             <a class="nav-link" href="login.php">Login</a>
                         </li>
                     <?php endif ?>
