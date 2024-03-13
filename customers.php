@@ -35,7 +35,7 @@ if ($_SESSION["customer"]["email"] === "admin@admin.com") {
                                     <th>Name</th>
                                     <th>Address</th>
                                     <th>Email</th>
-                                    <th>Action</th>
+                                    <th class="text-center">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -45,7 +45,7 @@ if ($_SESSION["customer"]["email"] === "admin@admin.com") {
                                         <td><?= $customer["name"] ?></td>
                                         <td><?= $customer["address"] ?></td>
                                         <td><?= $customer["email"] ?></td>
-                                        <td>
+                                        <td class="text-center">
                                             <a href="edit_customer.php?id=<?= $customer["id"] ?>" class="btn btn-primary">Edit</a>
                                             <a href="delete.php?id=<?= $customer["id"] ?>&type=customer" class="btn btn-danger">Delete</a>
                                         </td>
