@@ -41,7 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $_SESSION["flash"] = ["message" => "Product '{$name}' added."];
     }
 
-    header("Location: add_product.php");
+    header("Location: products.php");
     return;
 }
 
@@ -74,7 +74,7 @@ $products = $conn
                         </p>
                     <?php endif ?>
 
-                    <form method="POST" action="add_product.php">
+                    <form method="POST" action="products.php">
 
                         <div class="mb-3">
                             <label for="name" class="form-label">Name</label>

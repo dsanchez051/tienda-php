@@ -44,7 +44,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $_SESSION["flash"] = ["message" => "Category '{$type}' added."];
         }
 
-        header("Location: add_category.php");
+        header("Location: categories.php");
         return;
     }
 }
@@ -70,7 +70,7 @@ $categories = $conn->query("SELECT * FROM categories")->fetchAll(PDO::FETCH_ASSO
                         </p>
                     <?php endif ?>
 
-                    <form method="POST" action="add_category.php">
+                    <form method="POST" action="categories.php">
 
                         <div class="mb-3">
                             <label for="type" class="form-label">Category name</label>
