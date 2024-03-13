@@ -35,8 +35,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
                 $_SESSION["customer"] = $customer;
 
-                // Redirigir a la página de home
-                header("Location: home.php");
+                // Redirigir a la página de orders
+                header("Location: orders.php");
             }
         }
     }

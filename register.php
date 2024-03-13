@@ -71,8 +71,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
                 $_SESSION["customer"] = $customer;
 
-                // Redirigir a la página de home después de la inserción
-                header("Location: home.php");
+                // Redirigir a la página de orders después de la inserción
+                header("Location: orders.php");
             }
         }
     }

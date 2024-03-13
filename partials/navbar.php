@@ -1,7 +1,7 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
 
-        <a class="navbar-brand font-weight-bold" href="home.php">
+        <a class="navbar-brand font-weight-bold" href="orders.php">
             <img class="mr-2" src="./static/img/logo.png" />
             Tienda
         </a>
@@ -16,7 +16,10 @@
 
                     <?php if (isset($_SESSION["customer"]) && $_SESSION["customer"]["email"] != "admin@admin.com") : ?>
                         <li class="nav-item card border-secondary">
-                            <a class="nav-link" href="home.php">Home</a>
+                            <a class="nav-link" href="products.php">Buy</a>
+                        </li>
+                        <li class="nav-item card border-secondary">
+                            <a class="nav-link" href="orders.php">My Orders</a>
                         </li>
                         <li class="nav-item card border-secondary">
                             <a class="nav-link" href="customers.php">My Profile</a>
@@ -26,7 +29,7 @@
                         </li>
                     <?php elseif (isset($_SESSION["customer"]) && $_SESSION["customer"]["email"] == "admin@admin.com") : ?>
                         <li class="nav-item card border-secondary">
-                            <a class="nav-link" href="home.php">Home</a>
+                            <a class="nav-link" href="orders.php">Orders</a>
                         </li>
                         <li class="nav-item card border-secondary">
                             <a class="nav-link" href="customers.php">Customers</a>
