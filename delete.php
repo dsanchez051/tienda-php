@@ -42,7 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
 
         $_SESSION["flash"] = ["message" => "Category '{$category["type"]}' deleted.", "type" => "danger"];
 
-        header("Location: add_category.php");
+        header("Location: categories.php");
         return;
         
     } else if ($type == "product") {
@@ -69,7 +69,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
 
         $_SESSION["flash"] = ["message" => "Product '{$product["name"]}' deleted.", "type" => "danger"];
 
-        header("Location: add_product.php");
+        header("Location: products.php");
         return;
 
     } else if ($type == "order") {
@@ -81,22 +81,42 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
 
     } else if ($type == "customer") {
 
-        // Solo se puede eliminar uno mismo pero el administrador puede eliminar a cualquier cliente
+        // Solo se puede eliminar uno a sí mismo pero el administrador puede eliminar a cualquiera
         if ($id != $_SESSION["customer"]["id"] && $_SESSION["customer"]["email"] != "admin@admin.com") {
             http_response_code(403);
             echo ("HTTP 403 UNAUTHORIZED");
             return;
         }
 
-        // Verificar si el admin intenta eliminarse a sí mismo
+        // El admin no puede eliminarse a sí mismo
         if ($id == $_SESSION["customer"]["id"] && $_SESSION["customer"]["email"] == "admin@admin.com") {
             $_SESSION["flash"] = ["message" => "You can't delete yourself.", "type" => "danger"];
             header("Location: customers.php");
             return;
         }
 
+        // Mostrar mensaje de confirmación
+        if ($_SESSION["customer"]["email"] == "admin@admin.com") {
+            $confirmMessage = "¿Estás seguro de que quieres eliminar a este cliente?";
+        } else {
+            $confirmMessage = "¿Estás seguro de que quieres eliminar tu cuenta?";
+        }
+
+        // Mostrar mensaje de confirmación
+        echo "<script>
+                if (confirm('$confirmMessage')) {
+                    window.location.href = 'delete.php?id=$id&type=customer';
+                } else {
+                    window.location.href = 'customers.php';
+                }
+            </script>";
+        return;
+        
+
+        // Eliminar cliente
         $conn->prepare("DELETE FROM customers WHERE id = :id")->execute([":id" => $id]);
 
+        // Redirigir después de la eliminación
         if ($_SESSION["customer"]["email"] == "admin@admin.com") {
             header("Location: customers.php");
         } else {
