@@ -10,7 +10,7 @@ if (!isset($_SESSION["customer"])) {
     return;
 }
 
-// Si el usuario es el administrador, obtiene todos los clientes. Si no, obtiene solo su información.
+// Si el usuario es el administrador, obtiene la info de todos los clientes. Si no, solo mi info.
 if ($_SESSION["customer"]["email"] === "admin@admin.com") {
     $customers = $conn->query("SELECT * FROM customers")->fetchAll(PDO::FETCH_ASSOC);
 } else {

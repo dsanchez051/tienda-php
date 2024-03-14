@@ -16,8 +16,8 @@ $error = null;
 // Procesamiento del formulario
 if ($_SERVER["REQUEST_METHOD"] === "GET") {
 
-    $id = $_GET["id"];
-    $type = $_GET["type"];
+    $id = $_GET["id"]; // id del producto, categoría, pedido o cliente
+    $type = $_GET["type"]; // product, category, order, customer
 
     if ($type == "category") {
 
@@ -40,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
 
         $conn->prepare("DELETE FROM categories WHERE id = :id")->execute([":id" => $id]);
 
-        $_SESSION["flash"] = ["message" => "Category '{$category["type"]}' deleted.", "type" => "danger"];
+        // $_SESSION["flash"] = ["message" => "Category '{$category["type"]}' deleted.", "type" => "danger"];
 
         header("Location: categories.php");
         return;
@@ -67,16 +67,34 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
 
         $conn->prepare("DELETE FROM products WHERE id = :id")->execute([":id" => $id]);
 
-        $_SESSION["flash"] = ["message" => "Product '{$product["name"]}' deleted.", "type" => "danger"];
+        // $_SESSION["flash"] = ["message" => "Product '{$product["name"]}' deleted.", "type" => "danger"];
 
         header("Location: products.php");
         return;
 
     } else if ($type == "order") {
 
+        // Solo puede realizar esta acción el administrador
+        if ($_SESSION["customer"]["email"] != "admin@admin.com") {
+            http_response_code(403);
+            echo ("HTTP 403 UNAUTHORIZED");
+            return;
+        }
+
+        // comprueba antes de eliminar si existe el pedido
+        $statement = $conn->prepare("SELECT * FROM orders WHERE id = :id LIMIT 1");
+        $statement->execute([":id" => $id]);
+        $order = $statement->fetch(PDO::FETCH_ASSOC);
+
+        if ($statement->rowCount() == 0) {
+            http_response_code(404);
+            echo ("HTTP 404 NOT FOUND");
+            return;
+        }
+
         $conn->prepare("DELETE FROM orders WHERE id = :id")->execute([":id" => $id]);
 
-        header("Location: add_order.php");
+        header("Location: orders.php");
         return;
 
     } else if ($type == "customer") {

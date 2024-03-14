@@ -33,7 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $statement->execute();
 
         if ($statement->rowCount() > 0) {
-            $error = "Category already exists";
+            $error = "Category '{$type}' already exists.";
         } else {
             $conn
                 ->prepare("INSERT INTO categories (type) VALUES (:type)")
@@ -41,11 +41,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     ":type" => $type
                 ]);
 
-            $_SESSION["flash"] = ["message" => "Category '{$type}' added."];
-        }
+            // $_SESSION["flash"] = ["message" => "Category '{$type}' added."];
 
-        header("Location: categories.php");
-        return;
+            header("Location: categories.php");
+            return;
+        }
     }
 }
 
