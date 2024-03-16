@@ -4,6 +4,10 @@ require "database.php";
 
 session_start();
 
+function isAdmin(){
+    return $_SESSION["customer"]["email"] == "admin@admin.com";
+}
+
 // Se redirige al usuario a la página de inicio si no ha iniciado sesión como cliente
 if (!isset($_SESSION["customer"])) {
     header("Location: index.php");
@@ -11,7 +15,7 @@ if (!isset($_SESSION["customer"])) {
 }
 
 // Si el usuario es el administrador, obtiene la info de todos los clientes. Si no, solo mi info.
-if ($_SESSION["customer"]["email"] === "admin@admin.com") {
+if (isAdmin()) {
     $customers = $conn->query("SELECT * FROM customers")->fetchAll(PDO::FETCH_ASSOC);
 } else {
     $customers = $conn->query("SELECT * FROM customers WHERE id = {$_SESSION["customer"]["id"]}")->fetchAll(PDO::FETCH_ASSOC);

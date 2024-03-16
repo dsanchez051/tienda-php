@@ -69,7 +69,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["product_id"])) {
 // Obtener todas las categorías
 $categories = $conn->query("SELECT * FROM categories")->fetchAll(PDO::FETCH_ASSOC);
 
-// Obtener todos productos actualizados con el nombre de su respectiva categoría
+// Obtener todos productos con el nombre de su respectiva categoría
 $products = $conn
     ->query("SELECT products.id, products.name, products.price, categories.type as category FROM products 
             JOIN categories ON products.category_id = categories.id")
@@ -80,11 +80,10 @@ $products = $conn
 <?php require "partials/header.php" ?>
 
 
-<!-- Formulario para añadir una nuevo producto -->
 <div class="container pt-5">
     <div class="row justify-content-center">
 
-        <!-- Solo el admin puede añadir productos -->
+        <!-- Formulario para añadir una nuevo producto -->
         <?php if (isAdmin()) : ?>
             <div class="col-md-6">
                 <div class="card">
@@ -129,6 +128,7 @@ $products = $conn
             </div>
         <?php endif ?>
 
+        <!-- Listado de productos -->
         <div class="col-md-6 text-center">
             <div class="card">
                 <div class="card-header display-6">Products</div>
