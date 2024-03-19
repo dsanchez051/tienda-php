@@ -4,7 +4,8 @@ require "database.php";
 
 session_start();
 
-function isAdmin(){
+function isAdmin()
+{
     return $_SESSION["customer"]["email"] == "admin@admin.com";
 }
 
@@ -27,18 +28,28 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isAdmin()) {
     } else if (!is_numeric($price)) {
         $error = "Price must be a number";
     } else {
-        $conn
-            ->prepare("INSERT INTO products (name, price, category_id) VALUES (:name, :price, :category_id)")
-            ->execute([
-                ":name" => $name,
-                ":price" => $price,
-                ":category_id" => $category_id
-            ]);
 
-        // $_SESSION["flash"] = ["message" => "Product '{$name}' added."];
+        // Insertar nuevo producto en la base de datos comprobando si ya existe
+        $statement = $conn->prepare("SELECT * FROM products WHERE name = :name");
+        $statement->bindValue(":name", $name);
+        $statement->execute();
 
-        header("Location: products.php");
-        return;
+        if ($statement->rowCount() > 0) {
+            $error = "Product '{$name}' already exists.";
+        } else {
+            $conn
+                ->prepare("INSERT INTO products (name, price, category_id) VALUES (:name, :price, :category_id)")
+                ->execute([
+                    ":name" => $name,
+                    ":price" => $price,
+                    ":category_id" => $category_id
+                ]);
+
+            // $_SESSION["flash"] = ["message" => "Product '{$name}' added."];
+
+            header("Location: products.php");
+            return;
+        }
     }
 }
 
