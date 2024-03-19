@@ -28,16 +28,16 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
         case "product":
 
             // Solo puede realizar esta acción el administrador
-            if ($_SESSION["customer"]["email"] != "admin@admin.com") {
+            if (!isAdmin()) {
                 http_response_code(403);
                 echo ("HTTP 403 UNAUTHORIZED");
                 return;
             }
 
+            // Comprueba si existe el producto antes de eliminarlo
             $statement = $conn->prepare("SELECT * FROM products WHERE id = :id LIMIT 1");
             $statement->execute([":id" => $id]);
             $product = $statement->fetch(PDO::FETCH_ASSOC);
-
 
             if ($statement->rowCount() == 0) {
                 http_response_code(404);
@@ -45,9 +45,21 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
                 return;
             }
 
-            $conn->prepare("DELETE FROM products WHERE id = :id")->execute([":id" => $id]);
+            // Verificar si hay pedidos asociados a este producto
+            $statement = $conn->prepare("SELECT COUNT(*) AS count FROM orders WHERE product_id = :id");
+            $statement->execute([":id" => $id]);
+            $result = $statement->fetch(PDO::FETCH_ASSOC);
+            $orderCount = $result['count'];
 
-            // $_SESSION["flash"] = ["message" => "Product '{$product["name"]}' deleted.", "type" => "danger"];
+            if ($orderCount > 0) {
+                // Si hay pedidos asociados, redirigir con un mensaje de error
+                $_SESSION["flash"] = ["message" => "Cannot delete product because there are orders associated with it.", "type" => "danger"];
+                header("Location: products.php");
+                return;
+            }
+
+            // Eliminar producto
+            $conn->prepare("DELETE FROM products WHERE id = :id")->execute([":id" => $id]);
 
             header("Location: products.php");
             return;
@@ -56,12 +68,13 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
         case "category":
 
             // Solo puede realizar esta acción el administrador
-            if ($_SESSION["customer"]["email"] != "admin@admin.com") {
+            if (!isAdmin()) {
                 http_response_code(403);
                 echo ("HTTP 403 UNAUTHORIZED");
                 return;
             }
 
+            // Compueba si existe la categoría antes de eliminarla
             $statement = $conn->prepare("SELECT * FROM categories WHERE id = :id LIMIT 1");
             $statement->execute([":id" => $id]);
             $category = $statement->fetch(PDO::FETCH_ASSOC);
@@ -72,9 +85,21 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
                 return;
             }
 
-            $conn->prepare("DELETE FROM categories WHERE id = :id")->execute([":id" => $id]);
+            // Verificar si hay productos asociados a esta categoría
+            $statement = $conn->prepare("SELECT COUNT(*) AS count FROM products WHERE category_id = :id");
+            $statement->execute([":id" => $id]);
+            $result = $statement->fetch(PDO::FETCH_ASSOC);
+            $productCount = $result['count'];
 
-            // $_SESSION["flash"] = ["message" => "Category '{$category["type"]}' deleted.", "type" => "danger"];
+            if ($productCount > 0) {
+                // Si hay productos asociados, redirigir con un mensaje de error
+                $_SESSION["flash"] = ["message" => "Cannot delete category because there are products associated with it.", "type" => "danger"];
+                header("Location: categories.php");
+                return;
+            }
+
+            // No hay productos asociados --> eliminar la categoría
+            $conn->prepare("DELETE FROM categories WHERE id = :id")->execute([":id" => $id]);
 
             header("Location: categories.php");
             return;
@@ -83,13 +108,13 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
         case "order":
 
             // Solo puede realizar esta acción el administrador
-            if ($_SESSION["customer"]["email"] != "admin@admin.com") {
+            if (!isAdmin()) {
                 http_response_code(403);
                 echo ("HTTP 403 UNAUTHORIZED");
                 return;
             }
 
-            // comprueba antes de eliminar si existe el pedido
+            // Comprueba si existe el pedido antes de eliminarlo 
             $statement = $conn->prepare("SELECT * FROM orders WHERE id = :id LIMIT 1");
             $statement->execute([":id" => $id]);
             $order = $statement->fetch(PDO::FETCH_ASSOC);
@@ -100,6 +125,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
                 return;
             }
 
+            // Eliminar pedido
             $conn->prepare("DELETE FROM orders WHERE id = :id")->execute([":id" => $id]);
 
             header("Location: orders.php");
@@ -116,18 +142,17 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
             }
 
             // El admin no puede eliminarse a sí mismo
-            if ($id == $_SESSION["customer"]["id"] && $_SESSION["customer"]["email"] == "admin@admin.com") {
+            if ($id == $_SESSION["customer"]["id"] && isAdmin()) {
                 $_SESSION["flash"] = ["message" => "You can't delete yourself.", "type" => "danger"];
                 header("Location: customers.php");
                 return;
             }
 
             // Mostrar mensaje de confirmación
-            if ($_SESSION["customer"]["email"] == "admin@admin.com") {
-                $confirmMessage = "¿Estás seguro de que quieres eliminar a este cliente?";
-            } else {
-                $confirmMessage = "¿Estás seguro de que quieres eliminar tu cuenta?";
-            }
+            $confirmMessage = isAdmin() ?
+                "¿Estás seguro de que quieres eliminar a este cliente? Se eliminarán todos sus pedidos." :
+                "¿Estás seguro de que quieres eliminar tu cuenta? Se eliminarán todos tus pedidos.";
+
 
             // Mostrar mensaje de confirmación
             echo "<script>
@@ -139,12 +164,14 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
                 </script>";
             return;
 
+            // Eliminar todos los pedidos asociados a este cliente
+            $conn->prepare("DELETE FROM orders WHERE customer_id = :id")->execute([":id" => $id]);
 
             // Eliminar cliente
             $conn->prepare("DELETE FROM customers WHERE id = :id")->execute([":id" => $id]);
 
             // Redirigir después de la eliminación
-            if ($_SESSION["customer"]["email"] == "admin@admin.com") {
+            if (isAdmin()) {
                 header("Location: customers.php");
             } else {
                 header("Location: logout.php");
