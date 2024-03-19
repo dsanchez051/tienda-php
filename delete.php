@@ -10,6 +10,15 @@ function isAdmin()
     return $_SESSION["customer"]["email"] == "admin@admin.com";
 }
 
+function checkAdmin()
+{
+    if (!isAdmin()) {
+        http_response_code(403);
+        echo ("HTTP 403 UNAUTHORIZED");
+        return;
+    }
+}
+
 // Se redirige al usuario a la página de inicio si no ha iniciado sesión como cliente
 if (!isset($_SESSION["customer"])) {
     header("Location: index.php");
@@ -28,11 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
         case "product":
 
             // Solo puede realizar esta acción el administrador
-            if (!isAdmin()) {
-                http_response_code(403);
-                echo ("HTTP 403 UNAUTHORIZED");
-                return;
-            }
+            checkAdmin();
 
             // Comprueba si existe el producto antes de eliminarlo
             $statement = $conn->prepare("SELECT * FROM products WHERE id = :id LIMIT 1");
@@ -68,11 +73,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
         case "category":
 
             // Solo puede realizar esta acción el administrador
-            if (!isAdmin()) {
-                http_response_code(403);
-                echo ("HTTP 403 UNAUTHORIZED");
-                return;
-            }
+            checkAdmin();
 
             // Compueba si existe la categoría antes de eliminarla
             $statement = $conn->prepare("SELECT * FROM categories WHERE id = :id LIMIT 1");
@@ -108,11 +109,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
         case "order":
 
             // Solo puede realizar esta acción el administrador
-            if (!isAdmin()) {
-                http_response_code(403);
-                echo ("HTTP 403 UNAUTHORIZED");
-                return;
-            }
+            checkAdmin();
 
             // Comprueba si existe el pedido antes de eliminarlo 
             $statement = $conn->prepare("SELECT * FROM orders WHERE id = :id LIMIT 1");
@@ -171,11 +168,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
             $conn->prepare("DELETE FROM customers WHERE id = :id")->execute([":id" => $id]);
 
             // Redirigir después de la eliminación
-            if (isAdmin()) {
-                header("Location: customers.php");
-            } else {
-                header("Location: logout.php");
-            }
+            isAdmin() ? header("Location: customers.php") : header("Location: logout.php");
 
             return;
             // break;
