@@ -27,20 +27,6 @@ function checkAdmin()
     }
 }
 
-// crea una funcion generica para comprobar si existe un elemento en la base de datos
-function checkIfExists($conn, $table, $id)
-{
-    $statement = $conn->prepare("SELECT * FROM $table WHERE id = :id LIMIT 1");
-    $statement->execute([":id" => $id]);
-    $statement->fetch(PDO::FETCH_ASSOC);
-
-    if ($statement->rowCount() == 0) {
-        http_response_code(404);
-        echo ("HTTP 404 NOT FOUND");
-        return;
-    }
-}
-
 // Procesamiento del formulario
 if ($_SERVER["REQUEST_METHOD"] === "GET") {
 
@@ -54,7 +40,15 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
             checkAdmin();
 
             // Comprueba si existe el producto antes de eliminarlo
-            checkIfExists($conn, "products", $id);
+            $statement = $conn->prepare("SELECT * FROM products WHERE id = :id LIMIT 1");
+            $statement->execute([":id" => $id]);
+            $product = $statement->fetch(PDO::FETCH_ASSOC);
+
+            if ($statement->rowCount() == 0) {
+                http_response_code(404);
+                echo ("HTTP 404 NOT FOUND");
+                return;
+            }
 
             // Verificar si hay pedidos asociados a este producto
             $statement = $conn->prepare("SELECT COUNT(*) AS count FROM orders WHERE product_id = :id");
