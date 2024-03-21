@@ -27,6 +27,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isAdmin()) {
         $error = "Please fill all the fields.";
     } else if (!is_numeric($price)) {
         $error = "Price must be a number";
+    } else if ($category_id == "-") {
+        $error = "Please select a category.";
     } else {
 
         // Insertar nuevo producto en la base de datos comprobando si ya existe
@@ -122,7 +124,7 @@ $products = $conn
                             <div class="mb-3">
                                 <label for="category_id" class="form-label">Category</label>
                                 <select class="form-select" id="category_id" name="category_id">
-                                    <option value=""> - </option>
+                                    <option value="-"> - </option>
                                     <?php foreach ($categories as $category) : ?>
                                         <option value="<?= $category["id"] ?>">
                                             <?= $category["type"] ?>
