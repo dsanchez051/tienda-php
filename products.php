@@ -71,8 +71,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["product_id"])) {
             ":date" => $date
         ]);
 
+    $statement = $conn->prepare("SELECT * FROM products WHERE id = :id");
+    $statement->execute([":id" => $product_id]);
+    $product = $statement->fetch(PDO::FETCH_ASSOC);
 
-    $_SESSION["flash"] = ["message" => "Product added to cart."];
+    $_SESSION["flash"] = ["message" => "Product '{$product["name"]}' added to cart."];
 
     header("Location: products.php");
     return;

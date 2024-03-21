@@ -27,7 +27,6 @@ function checkAdmin()
     }
 }
 
-// crea una funcion generica para comprobar si existe un elemento en la base de datos
 function checkIfExists($conn, $table, $id)
 {
     $statement = $conn->prepare("SELECT * FROM $table WHERE id = :id LIMIT 1");
@@ -40,6 +39,19 @@ function checkIfExists($conn, $table, $id)
         return;
     }
 }
+ function deleteItem($conn, $table, $id){
+    $conn->prepare("DELETE FROM $table WHERE id = :id")->execute([":id" => $id]);
+ }
+
+function checkAssociated($conn, $table, $id, $column){
+    $statement = $conn->prepare("SELECT COUNT(*) AS count FROM $table WHERE $column = :id");
+    $statement->execute([":id" => $id]);
+    $result = $statement->fetch(PDO::FETCH_ASSOC);
+    return $result['count'];
+    
+}
+
+
 
 // Procesamiento del formulario
 if ($_SERVER["REQUEST_METHOD"] === "GET") {
@@ -57,10 +69,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
             checkIfExists($conn, "products", $id);
 
             // Verificar si hay pedidos asociados a este producto
-            $statement = $conn->prepare("SELECT COUNT(*) AS count FROM orders WHERE product_id = :id");
-            $statement->execute([":id" => $id]);
-            $result = $statement->fetch(PDO::FETCH_ASSOC);
-            $orderCount = $result['count'];
+            $orderCount = checkAssociated($conn, "orders", $id, "product_id");
 
             if ($orderCount > 0) {
                 // Si hay pedidos asociados, redirigir con un mensaje de error
@@ -74,7 +83,6 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
 
             header("Location: products.php");
             return;
-            // break;
 
         case "category":
 
@@ -82,21 +90,10 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
             checkAdmin();
 
             // Compueba si existe la categoría antes de eliminarla
-            $statement = $conn->prepare("SELECT * FROM categories WHERE id = :id LIMIT 1");
-            $statement->execute([":id" => $id]);
-            $category = $statement->fetch(PDO::FETCH_ASSOC);
-
-            if ($statement->rowCount() == 0) {
-                http_response_code(404);
-                echo ("HTTP 404 NOT FOUND");
-                return;
-            }
+            checkIfExists($conn, "categories", $id);
 
             // Verificar si hay productos asociados a esta categoría
-            $statement = $conn->prepare("SELECT COUNT(*) AS count FROM products WHERE category_id = :id");
-            $statement->execute([":id" => $id]);
-            $result = $statement->fetch(PDO::FETCH_ASSOC);
-            $productCount = $result['count'];
+            $productCount = checkAssociated($conn, "products", $id, "category_id");
 
             if ($productCount > 0) {
                 // Si hay productos asociados, redirigir con un mensaje de error
@@ -110,7 +107,6 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
 
             header("Location: categories.php");
             return;
-            // break;
 
         case "order":
 
@@ -118,22 +114,13 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
             checkAdmin();
 
             // Comprueba si existe el pedido antes de eliminarlo 
-            $statement = $conn->prepare("SELECT * FROM orders WHERE id = :id LIMIT 1");
-            $statement->execute([":id" => $id]);
-            $order = $statement->fetch(PDO::FETCH_ASSOC);
-
-            if ($statement->rowCount() == 0) {
-                http_response_code(404);
-                echo ("HTTP 404 NOT FOUND");
-                return;
-            }
+            checkIfExists($conn, "orders", $id);
 
             // Eliminar pedido
             $conn->prepare("DELETE FROM orders WHERE id = :id")->execute([":id" => $id]);
 
             header("Location: orders.php");
             return;
-            // break;
 
         case "customer":
 
@@ -151,10 +138,13 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
                 return;
             }
 
+            // Comprueba si existe el cliente antes de eliminarlo
+            checkIfExists($conn, "customers", $id);
+
             // Mostrar mensaje de confirmación
-            $confirmMessage = isAdmin() ?
-                "¿Estás seguro de que quieres eliminar a este cliente? Se eliminarán todos sus pedidos." :
-                "¿Estás seguro de que quieres eliminar tu cuenta? Se eliminarán todos tus pedidos.";
+            // $confirmMessage = isAdmin() ?
+            //     "¿Estás seguro de que quieres eliminar a este cliente? Se eliminarán todos sus pedidos." :
+            //     "¿Estás seguro de que quieres eliminar tu cuenta? Se eliminarán todos tus pedidos.";
 
 
             // Mostrar mensaje de confirmación
@@ -177,7 +167,6 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
             isAdmin() ? header("Location: customers.php") : header("Location: logout.php");
 
             return;
-            // break;
 
         default:
             http_response_code(404);
